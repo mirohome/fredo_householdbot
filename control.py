@@ -142,7 +142,10 @@ def shopping_list(text,chat):
         
 # Control for moneybox
 def moneybox(text,chat,user):
-    if text.split(' ')[1].lower() == 'add':
+    if len(text.split(' ')) == 1:
+        message = 'Please specify amount'
+        send_message(message, chat)
+    elif text.split(' ')[1].lower() == 'add':
         amount = int(text.split(' ')[2].lower())
         db.mb_add_item(user,chat,amount)
         
