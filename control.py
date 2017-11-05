@@ -175,42 +175,45 @@ def main():
             last_update_id = get_last_update_id(updates) + 1
         else:
             last_update_id = None
-        for update in updates['result']:
-            params = get_update_params(update)
-            
-            text = params["text"]
-            chat = params["chat_id"]
-            from_user = params["from_user"]
+        try:    
+            for update in updates['result']:
+                params = get_update_params(update)
                 
-            if text.split(' ')[0] == '/price':
-                try:
-                    price = get_current_price(text.split(' ')[1].upper())
-                    if price is None:
-                        send_message(text.split(' ')[1] + " was not found.", chat)
-                    else:
-                        send_message("Current price is " + str(price), chat)
-                except:
-                    send_message("Please specify stock", chat)
-            elif text.split(' ')[0] == '/news':
-                news_controller(text, chat)
-            elif text.split(' ')[0] == '/sl':
-                shopping_list(text,chat)
-            elif text.split(' ')[0] == '/mb':
-                moneybox(text,chat,from_user)
-            elif text.split(' ')[0] == '/commands':
-                instructions(chat,start=False)
-            elif text.split(' ')[0] == '/start':
-                instructions(chat,start=True)
-            elif text.split(' ')[0] == '/continue':
-                continue
-            elif not text.startswith('/'):
-                continue
-            else:
-                text_back = ''
-                text_back = "I don't know what you mean by " + text + '\n'
-                text_back = text_back + 'Write /commands to see what the bot can do.'
-                send_message(text_back, chat)
-        last_update_id = get_last_update_id(updates) + 1
+                text = params["text"]
+                chat = params["chat_id"]
+                from_user = params["from_user"]
+                    
+                if text.split(' ')[0] == '/price':
+                    try:
+                        price = get_current_price(text.split(' ')[1].upper())
+                        if price is None:
+                            send_message(text.split(' ')[1] + " was not found.", chat)
+                        else:
+                            send_message("Current price is " + str(price), chat)
+                    except:
+                        send_message("Please specify stock", chat)
+                elif text.split(' ')[0] == '/news':
+                    news_controller(text, chat)
+                elif text.split(' ')[0] == '/sl':
+                    shopping_list(text,chat)
+                elif text.split(' ')[0] == '/mb':
+                    moneybox(text,chat,from_user)
+                elif text.split(' ')[0] == '/commands':
+                    instructions(chat,start=False)
+                elif text.split(' ')[0] == '/start':
+                    instructions(chat,start=True)
+                elif text.split(' ')[0] == '/continue':
+                    continue
+                elif not text.startswith('/'):
+                    continue
+                else:
+                    text_back = ''
+                    text_back = "I don't know what you mean by " + text + '\n'
+                    text_back = text_back + 'Write /commands to see what the bot can do.'
+                    send_message(text_back, chat)
+            last_update_id = get_last_update_id(updates) + 1
+        except:
+            continue
 
         time.sleep(0.5)
 
