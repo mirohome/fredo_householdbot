@@ -39,15 +39,14 @@ def get_last_update_id(updates):
         update_ids.append(int(update["update_id"]))
     return max(update_ids)
     
-def get_last_chat_id_and_text(updates):
-    num_updates = len(updates["result"])
-    last_update = num_updates - 1
-    
+def get_update_params(update):
     dict_ = {}
-    dict_["text"] = updates["result"][last_update]["message"]["text"]
-    dict_["chat_id"] = updates["result"][last_update]["message"]["chat"]["id"]
-    dict_["from_user"] = updates["result"][last_update]["message"]["from"]["username"]
-    
+    dict_["text"] = update["message"]["text"]
+    dict_["chat_id"] = update["message"]["chat"]["id"]
+    try:
+        dict_["from_user"] = update["message"]["from"]["username"]
+    except:
+        dict_["from_user"] = update["message"]["from"]["last_name"]
     return (dict_)
     
 def send_message(text, chat_id, reply_markup=None):
@@ -146,11 +145,14 @@ def moneybox(text,chat,user):
         message = 'Please specify amount'
         send_message(message, chat)
     elif text.split(' ')[1].lower() == 'add':
-        amount = int(text.split(' ')[2].lower())
-        db.mb_add_item(user,chat,amount)
+        try:
+            amount = int(text.split(' ')[2].lower())
+            db.mb_add_item(user,chat,amount)
         
-        message = str(amount) + " euro added for " + user
-        send_message(message, chat)
+            message = str(amount) + " euro added for " + user
+            send_message(message, chat)
+        except:
+            send_message("Please state the amount in euro.", chat)
     elif text.split(' ')[1].lower() == 'show':
         items = db.mb_get_items(chat)
         messages = [item[0] + ": " + str(item[1]) + " euro" for item in items]
@@ -173,15 +175,13 @@ def main():
             last_update_id = get_last_update_id(updates) + 1
         else:
             last_update_id = None
-        try:
-            params = get_last_chat_id_and_text(updates)
+        for update in updates['result']:
+            params = get_update_params(update)
             
             text = params["text"]
             chat = params["chat_id"]
             from_user = params["from_user"]
-        except:
-            continue
-        if len(updates["result"]) > 0:
+                
             if text.split(' ')[0] == '/price':
                 try:
                     price = get_current_price(text.split(' ')[1].upper())
@@ -210,7 +210,8 @@ def main():
                 text_back = "I don't know what you mean by " + text + '\n'
                 text_back = text_back + 'Write /commands to see what the bot can do.'
                 send_message(text_back, chat)
-            last_update_id = get_last_update_id(updates) + 1
+        last_update_id = get_last_update_id(updates) + 1
+
         time.sleep(0.5)
 
 if __name__ == '__main__':
