@@ -165,7 +165,7 @@ def main():
     db.setup()
     
     updates = get_updates()
-    if updates['result']:
+    if 'result' in updates:
         if len(updates['result']) > 0:
             last_update_id = get_last_update_id(updates) + 1
         else:
