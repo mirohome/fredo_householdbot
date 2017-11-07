@@ -10,19 +10,15 @@ db = DBHelper()
 
 TOKEN = os.getenv("TG_TOKEN")
 URL = "https://api.telegram.org/bot{}/".format(TOKEN)
-print(TOKEN)
 
 NEWS_TOKEN = os.getenv("NEWS_TOKEN")
 NEWS_URL = "https://newsapi.org/v1/articles?source={source}&sortBy=top&apiKey={token}".format(token = NEWS_TOKEN, source = '{source}')
-print(NEWS_TOKEN)
 
 # Code for requests and dealing with telegram api.
 
 def get_url(url):
     response = requests.get(url)
     content = response.content.decode("utf8")
-    
-    print(content)
     return content
    
 def get_json_from_url(url):
@@ -40,7 +36,7 @@ def get_updates(offset=None):
 def get_last_update_id(updates):
     update_ids = []
     for update in updates["result"]:
-        update_ids.append(int(update["update_id"]))
+        update_ids.append(float(update["update_id"]))
     return max(update_ids)
     
 def get_update_params(update):
@@ -150,7 +146,7 @@ def moneybox(text,chat,user):
         send_message(message, chat)
     elif text.split(' ')[1].lower() == 'add':
         try:
-            amount = float(text.split(' ')[2].lower())
+            amount = int(text.split(' ')[2].lower())
             db.mb_add_item(user,chat,amount)
         
             message = str(amount) + " euro added for " + user
@@ -169,22 +165,16 @@ def main():
     db.setup()
     
     updates = get_updates()
-    if 'result' in updates:
+    if len(updates['result']) > 0:
+        last_update_id = get_last_update_id(updates) + 1
+    else:
+        last_update_id = None
+    while True:
+        updates = get_updates(last_update_id)
         if len(updates['result']) > 0:
             last_update_id = get_last_update_id(updates) + 1
         else:
             last_update_id = None
-    else: 
-        last_update_id = None
-    while True:
-        updates = get_updates(last_update_id)
-        if 'result' in updates:
-            if len(updates['result']) > 0:
-                last_update_id = get_last_update_id(updates) + 1
-            else:
-                last_update_id = None
-        else:
-            continue
         try:    
             for update in updates['result']:
                 params = get_update_params(update)
