@@ -146,7 +146,7 @@ def moneybox(text,chat,user):
         send_message(message, chat)
     elif text.split(' ')[1].lower() == 'add':
         try:
-            amount = int(text.split(' ')[2].lower())
+            amount = float(text.split(' ')[2].lower())
             db.mb_add_item(user,chat,amount)
         
             message = str(amount) + " euro added for " + user
@@ -165,8 +165,11 @@ def main():
     db.setup()
     
     updates = get_updates()
-    if len(updates['result']) > 0:
-        last_update_id = get_last_update_id(updates) + 1
+    if updates['result']:
+        if len(updates['result']) > 0:
+            last_update_id = get_last_update_id(updates) + 1
+        else:
+            last_update_id = None
     else:
         last_update_id = None
     while True:
