@@ -10,15 +10,19 @@ db = DBHelper()
 
 TOKEN = os.getenv("TG_TOKEN")
 URL = "https://api.telegram.org/bot{}/".format(TOKEN)
+print(TOKEN)
 
 NEWS_TOKEN = os.getenv("NEWS_TOKEN")
 NEWS_URL = "https://newsapi.org/v1/articles?source={source}&sortBy=top&apiKey={token}".format(token = NEWS_TOKEN, source = '{source}')
+print(NEWS_TOKEN)
 
 # Code for requests and dealing with telegram api.
 
 def get_url(url):
     response = requests.get(url)
     content = response.content.decode("utf8")
+    
+    print(content)
     return content
    
 def get_json_from_url(url):
