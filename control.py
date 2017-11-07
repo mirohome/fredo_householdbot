@@ -170,7 +170,7 @@ def main():
             last_update_id = get_last_update_id(updates) + 1
         else:
             last_update_id = None
-    else:
+    else: 
         last_update_id = None
     while True:
         updates = get_updates(last_update_id)
@@ -180,7 +180,7 @@ def main():
             else:
                 last_update_id = None
         else:
-            last_update_id = None
+            continue
         try:    
             for update in updates['result']:
                 params = get_update_params(update)
