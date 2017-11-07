@@ -19,6 +19,7 @@ NEWS_URL = "https://newsapi.org/v1/articles?source={source}&sortBy=top&apiKey={t
 def get_url(url):
     response = requests.get(url)
     content = response.content.decode("utf8")
+    print(content)
     return content
    
 def get_json_from_url(url):
