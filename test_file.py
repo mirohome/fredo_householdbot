@@ -3,5 +3,5 @@ db = DBHelper()
 
 chat = "-245116892"
 
-minimum = min(db.mb_get_items(chat))[1]
-print(data)
+for i in db.todo_get_items(chat):
+    print(i)
